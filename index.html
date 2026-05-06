@@ -69,6 +69,21 @@
 </head>
 <body class="min-h-screen text-gray-900 flex flex-col items-center py-8 px-4 sm:py-12 sm:px-6 lg:px-8">
 
+    <!-- Top Navigation -->
+    <nav class="w-full max-w-6xl flex justify-between items-center mb-6 sm:mb-8 gap-2 overflow-x-auto pb-2">
+        <div class="flex gap-2">
+            <button id="info-btn" class="bg-blue-400 text-black border-4 border-black font-pixel text-[10px] sm:text-xs py-2 px-3 sm:px-4 retro-btn cursor-pointer whitespace-nowrap">
+                INFO
+            </button>
+            <a href="coming-soon.html" class="bg-pink-400 text-black border-4 border-black font-pixel text-[10px] sm:text-xs py-2 px-3 sm:px-4 retro-btn cursor-pointer whitespace-nowrap">
+                UPCOMING
+            </a>
+        </div>
+        <button id="settings-btn" class="bg-gray-300 text-black border-4 border-black font-pixel text-[10px] sm:text-xs py-2 px-3 sm:px-4 retro-btn cursor-pointer whitespace-nowrap">
+            SETTINGS
+        </button>
+    </nav>
+
     <!-- Header Section -->
     <header class="text-center mb-10 sm:mb-16 w-full max-w-md sm:max-w-none mx-auto">
         <div class="inline-block bg-yellow-400 p-4 sm:p-6 border-4 border-black retro-box transform -rotate-2">
@@ -114,6 +129,23 @@
         <p>&copy; 2026 Rekindle Games. Insert Coin to Continue.</p>
     </footer>
 
+    <!-- Info Modal -->
+    <div id="info-modal" class="hidden fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4">
+        <div class="bg-white border-4 border-black p-6 w-full max-w-md retro-box relative">
+            <button id="close-info-btn" class="absolute -top-4 -right-4 bg-red-500 text-white border-4 border-black w-10 h-10 flex items-center justify-center font-pixel text-xl retro-btn cursor-pointer">X</button>
+            <h2 class="font-pixel text-2xl mb-4 text-blue-600">SYSTEM INFO</h2>
+            <div class="space-y-4 font-mono text-lg text-gray-800">
+                <p><strong>DEVELOPER:</strong> Saqib Zahid</p>
+                <p><strong>VERSION:</strong> 1.0.0</p>
+                <p><strong>CREDITS:</strong> Rekindle Games</p>
+                <div class="border-t-4 border-black pt-4 mt-4">
+                    <p class="font-pixel text-sm mb-2">THE IDEA:</p>
+                    <p class="text-base leading-tight">Your childhood, restarted. This hub was built to preserve classic mini-games in a single, nostalgic web application. A love letter to the 8-bit arcade era.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Core Logic -->
     <script>
         // Register Service Worker for PWA
@@ -129,6 +161,18 @@
             const container = document.getElementById('games-container');
             const stateLoading = document.getElementById('state-loading');
             const stateError = document.getElementById('state-error');
+            
+            // Modal Elements
+            const infoBtn = document.getElementById('info-btn');
+            const infoModal = document.getElementById('info-modal');
+            const closeInfoBtn = document.getElementById('close-info-btn');
+
+            // Modal Event Listeners
+            infoBtn.addEventListener('click', () => infoModal.classList.remove('hidden'));
+            closeInfoBtn.addEventListener('click', () => infoModal.classList.add('hidden'));
+            infoModal.addEventListener('click', (e) => {
+                if (e.target === infoModal) infoModal.classList.add('hidden');
+            });
 
             // 1. Fetch the manifest
             fetch('games/manifest.json')
