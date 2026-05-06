@@ -24,7 +24,7 @@
         }
 
         .retro-box {
-            box-shadow: 4px 4px 0px 0px rgba(255,255,255,0.2);
+            box-shadow: 4px 4px 0px 0px rgba(255,255,255,0.2);z
         }
 
         .retro-btn {
@@ -46,6 +46,8 @@
             cursor: pointer;
             user-select: none;
             -webkit-tap-highlight-color: transparent;
+            width: 100%;
+            height: 100%;
         }
 
         @media (min-width: 640px) {
@@ -70,16 +72,21 @@
 <body class="min-h-screen text-gray-100 flex flex-col items-center">
 
     <!-- Top Navigation -->
-    <nav class="w-full p-4 flex items-center justify-between bg-gray-800 border-b-4 border-gray-950 max-w-4xl">
-        <a href="../index.html" class="inline-block bg-yellow-400 text-black border-4 border-black font-pixel text-[10px] sm:text-xs py-2 px-3 retro-btn">
+    <nav class="w-full p-4 flex items-center justify-between bg-gray-800 border-b-4 border-gray-950 max-w-4xl gap-2">
+        <a href="../index.html" class="inline-block bg-yellow-400 text-black border-4 border-black font-pixel text-[10px] sm:text-xs py-2 px-3 retro-btn whitespace-nowrap">
             &lt; HUB
         </a>
-        <h1 class="font-pixel text-sm sm:text-xl text-white uppercase tracking-widest text-center flex-grow">
+        <h1 class="font-pixel text-sm sm:text-xl text-white uppercase tracking-widest text-center flex-grow hidden sm:block">
             RETRO CHESS
         </h1>
-        <button id="resetBtn" class="bg-red-500 text-white border-4 border-black font-pixel text-[10px] sm:text-xs py-2 px-3 retro-btn">
-            RESET
-        </button>
+        <div class="flex gap-2">
+            <button id="modeBtn" class="bg-blue-500 text-white border-4 border-black font-pixel text-[10px] sm:text-xs py-2 px-3 retro-btn whitespace-nowrap">
+                VS CPU
+            </button>
+            <button id="resetBtn" class="bg-red-500 text-white border-4 border-black font-pixel text-[10px] sm:text-xs py-2 px-3 retro-btn whitespace-nowrap">
+                RESET
+            </button>
+        </div>
     </nav>
 
     <!-- Game Area Container -->
@@ -87,7 +94,7 @@
         
         <!-- Status Display -->
         <div class="bg-blue-600 border-4 border-black text-white font-pixel p-3 mb-6 w-full text-center text-xs sm:text-sm retro-box uppercase" id="statusText">
-            WHITE TO MOVE
+            LOADING CHESS ENGINE...
         </div>
         
         <!-- Chess Board -->
@@ -103,10 +110,19 @@
             const boardEl = document.getElementById('board');
             const statusText = document.getElementById('statusText');
             const resetBtn = document.getElementById('resetBtn');
+            const modeBtn = document.getElementById('modeBtn');
+
+            // Prevent crash if internet/cdn blocks chess.js
+            if (typeof Chess === 'undefined') {
+                statusText.innerText = "ERROR: CHESS ENGINE OFFLINE";
+                statusText.classList.replace("bg-blue-600", "bg-red-600");
+                return;
+            }
 
             // Initialize chess.js game engine
             let game = new Chess();
             let selectedSquare = null;
+            let vsComputer = true; // Solo Mode by default
 
             // Unicode pieces mapped to chess.js standard notations
             const pieceSymbols = {
@@ -115,17 +131,17 @@
 
             function renderBoard() {
                 boardEl.innerHTML = '';
-                const board = game.board(); // Returns 8x8 array
+                const columns = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
 
-                for (let r = 0; r < 8; r++) {
+                // Render rows 8 down to 1
+                for (let r = 8; r >= 1; r--) {
                     for (let c = 0; c < 8; c++) {
-                        // Standard algebraic notation (e.g., 'a8', 'e2')
-                        const squareName = String.fromCharCode(97 + c) + (8 - r);
+                        const squareName = columns[c] + r;
                         
                         const squareEl = document.createElement('div');
                         squareEl.classList.add('chess-square');
                         
-                        // Checkered pattern
+                        // Checkered pattern logic: a8 is light, b8 is dark...
                         if ((r + c) % 2 === 0) {
                             squareEl.classList.add('light-square');
                         } else {
@@ -137,8 +153,8 @@
                             squareEl.classList.add('selected-square');
                         }
 
-                        // Add Piece if it exists
-                        const piece = board[r][c];
+                        // Robust piece fetching compatible with old chess.js versions
+                        const piece = game.get(squareName);
                         if (piece) {
                             squareEl.innerText = pieceSymbols[piece.type];
                             squareEl.classList.add(piece.color === 'w' ? 'piece-white' : 'piece-black');
@@ -155,35 +171,55 @@
 
             function handleSquareClick(square) {
                 if (game.game_over()) return;
+                
+                // Block input if it's the CPU's turn
+                if (vsComputer && game.turn() === 'b') return;
 
                 // If a square is already selected, try to move
                 if (selectedSquare) {
-                    // Try the move using chess.js
                     let move = game.move({
                         from: selectedSquare,
                         to: square,
-                        promotion: 'q' // Auto-promote to Queen for simplicity
+                        promotion: 'q' // Auto-promote to Queen
                     });
 
                     if (move === null) {
-                        // Invalid move. Did we click another piece of our own color?
+                        // Invalid move: Did we click our own piece? Change selection.
                         const piece = game.get(square);
                         if (piece && piece.color === game.turn()) {
-                            selectedSquare = square; // Change selection
+                            selectedSquare = square; 
                         } else {
-                            selectedSquare = null; // Deselect
+                            selectedSquare = null; 
                         }
                     } else {
-                        // Valid move executed
+                        // Valid player move executed
                         selectedSquare = null;
+                        
+                        if (vsComputer && !game.game_over()) {
+                            renderBoard();
+                            statusText.innerText = "CPU IS THINKING...";
+                            setTimeout(makeComputerMove, 600); // CPU delay
+                            return;
+                        }
                     }
                 } else {
-                    // No square selected yet. Select this one if it has a piece of the current turn's color
+                    // Select initial piece
                     const piece = game.get(square);
                     if (piece && piece.color === game.turn()) {
                         selectedSquare = square;
                     }
                 }
+                renderBoard();
+            }
+
+            function makeComputerMove() {
+                if (game.game_over()) return;
+                
+                const possibleMoves = game.moves();
+                if (possibleMoves.length === 0) return;
+
+                const randomIdx = Math.floor(Math.random() * possibleMoves.length);
+                game.move(possibleMoves[randomIdx]);
                 renderBoard();
             }
 
@@ -203,7 +239,7 @@
                 }
                 statusText.innerText = status;
                 
-                // Change banner color based on turn
+                // Color formatting
                 if(game.game_over()) {
                     statusText.className = "bg-red-600 border-4 border-black text-white font-pixel p-3 mb-6 w-full text-center text-xs sm:text-sm retro-box uppercase";
                 } else if (game.turn() === 'w') {
@@ -213,23 +249,20 @@
                 }
             }
 
-            // Reset functionality
+            // Button Event Listeners
             resetBtn.addEventListener('click', () => {
                 game.reset();
                 selectedSquare = null;
                 renderBoard();
             });
 
-            // Mode toggle functionality
-            if (modeBtn) {
-                modeBtn.addEventListener('click', () => {
-                    vsComputer = !vsComputer;
-                    modeBtn.innerText = vsComputer ? "VS CPU" : "VS P2";
-                    game.reset(); // Restart game on mode change
-                    selectedSquare = null;
-                    renderBoard();
-                });
-            }
+            modeBtn.addEventListener('click', () => {
+                vsComputer = !vsComputer;
+                modeBtn.innerText = vsComputer ? "VS CPU" : "VS P2";
+                game.reset(); // Restart game on mode change
+                selectedSquare = null;
+                renderBoard();
+            });
 
             // Initial Render
             renderBoard();
