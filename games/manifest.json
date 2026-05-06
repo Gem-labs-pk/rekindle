@@ -1,13 +1,5 @@
 [
   {
-    "id": "tic-tac-toe",
-    "title": "Tic-Tac-Toe",
-    "description": "The ultimate battle of X's and O's. Settle the score like it's 1999.",
-    "path": "games/boilerplate.html",
-    "bgColor": "bg-pink-200",
-    "icon": "<svg class=\"w-16 h-16 sm:w-24 sm:h-24 text-black\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"3\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M4 14h16M4 10h16M14 4v16M10 4v16\"></path></svg>"
-  },
-  {
     "id": "coming soon",
     "title": "Coming Soon",
     "description": "Exciting games coming your way!",
