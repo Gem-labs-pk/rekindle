@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Retro Chess | Rekindle</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts for Retro Vibe -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+    <!-- Chess.js library for game logic -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
+    
+    <style>
+        body {
+            font-family: 'VT323', monospace;
+            background-color: #111827; /* Gray 900 */
+        }
+
+        .font-pixel {
+            font-family: 'Press Start 2P', cursive;
+        }
+
+        .retro-box {
+            box-shadow: 4px 4px 0px 0px rgba(255,255,255,0.2);
+        }
+
+        .retro-btn {
+            box-shadow: 4px 4px 0px 0px rgba(0,0,0,1);
+            transition: all 0.1s ease;
+        }
+
+        .retro-btn:active {
+            transform: translate(4px, 4px);
+            box-shadow: 0px 0px 0px 0px rgba(0,0,0,1);
+        }
+
+        /* Chess Board Styles */
+        .chess-square {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            cursor: pointer;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        @media (min-width: 640px) {
+            .chess-square { font-size: 3rem; }
+        }
+
+        .light-square { background-color: #fde047; /* yellow-300 */ }
+        .dark-square { background-color: #166534; /* green-800 */ }
+        .selected-square { background-color: #f97316 !important; /* orange-500 */ }
+        
+        .piece-white {
+            color: #ffffff;
+            text-shadow: 2px 2px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+        }
+        
+        .piece-black {
+            color: #000000;
+            text-shadow: 2px 2px 0 #fff, -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff;
+        }
+    </style>
+</head>
+<body class="min-h-screen text-gray-100 flex flex-col items-center">
+
+    <!-- Top Navigation -->
+    <nav class="w-full p-4 flex items-center justify-between bg-gray-800 border-b-4 border-gray-950 max-w-4xl">
+        <a href="../index.html" class="inline-block bg-yellow-400 text-black border-4 border-black font-pixel text-[10px] sm:text-xs py-2 px-3 retro-btn">
+            &lt; HUB
+        </a>
+        <h1 class="font-pixel text-sm sm:text-xl text-white uppercase tracking-widest text-center flex-grow">
+            RETRO CHESS
+        </h1>
+        <button id="resetBtn" class="bg-red-500 text-white border-4 border-black font-pixel text-[10px] sm:text-xs py-2 px-3 retro-btn">
+            RESET
+        </button>
+    </nav>
+
+    <!-- Game Area Container -->
+    <main class="flex-grow flex flex-col items-center justify-center p-4 w-full max-w-lg">
+        
+        <!-- Status Display -->
+        <div class="bg-blue-600 border-4 border-black text-white font-pixel p-3 mb-6 w-full text-center text-xs sm:text-sm retro-box uppercase" id="statusText">
+            WHITE TO MOVE
+        </div>
+        
+        <!-- Chess Board -->
+        <div id="board" class="w-full aspect-square grid grid-cols-8 grid-rows-8 border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] bg-black mb-6">
+            <!-- Squares injected via JS -->
+        </div>
+
+    </main>
+
+    <!-- Game Logic -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const boardEl = document.getElementById('board');
+            const statusText = document.getElementById('statusText');
+            const resetBtn = document.getElementById('resetBtn');
+
+            // Initialize chess.js game engine
+            let game = new Chess();
+            let selectedSquare = null;
+
+            // Unicode pieces mapped to chess.js standard notations
+            const pieceSymbols = {
+                'p': '♟', 'r': '♜', 'n': '♞', 'b': '♝', 'q': '♛', 'k': '♚'
+            };
+
+            function renderBoard() {
+                boardEl.innerHTML = '';
+                const board = game.board(); // Returns 8x8 array
+
+                for (let r = 0; r < 8; r++) {
+                    for (let c = 0; c < 8; c++) {
+                        // Standard algebraic notation (e.g., 'a8', 'e2')
+                        const squareName = String.fromCharCode(97 + c) + (8 - r);
+                        
+                        const squareEl = document.createElement('div');
+                        squareEl.classList.add('chess-square');
+                        
+                        // Checkered pattern
+                        if ((r + c) % 2 === 0) {
+                            squareEl.classList.add('light-square');
+                        } else {
+                            squareEl.classList.add('dark-square');
+                        }
+
+                        // Highlight selected square
+                        if (selectedSquare === squareName) {
+                            squareEl.classList.add('selected-square');
+                        }
+
+                        // Add Piece if it exists
+                        const piece = board[r][c];
+                        if (piece) {
+                            squareEl.innerText = pieceSymbols[piece.type];
+                            squareEl.classList.add(piece.color === 'w' ? 'piece-white' : 'piece-black');
+                        }
+
+                        // Click Handler
+                        squareEl.addEventListener('click', () => handleSquareClick(squareName));
+                        
+                        boardEl.appendChild(squareEl);
+                    }
+                }
+                updateStatus();
+            }
+
+            function handleSquareClick(square) {
+                if (game.game_over()) return;
+
+                // If a square is already selected, try to move
+                if (selectedSquare) {
+                    // Try the move using chess.js
+                    let move = game.move({
+                        from: selectedSquare,
+                        to: square,
+                        promotion: 'q' // Auto-promote to Queen for simplicity
+                    });
+
+                    if (move === null) {
+                        // Invalid move. Did we click another piece of our own color?
+                        const piece = game.get(square);
+                        if (piece && piece.color === game.turn()) {
+                            selectedSquare = square; // Change selection
+                        } else {
+                            selectedSquare = null; // Deselect
+                        }
+                    } else {
+                        // Valid move executed
+                        selectedSquare = null;
+                    }
+                } else {
+                    // No square selected yet. Select this one if it has a piece of the current turn's color
+                    const piece = game.get(square);
+                    if (piece && piece.color === game.turn()) {
+                        selectedSquare = square;
+                    }
+                }
+                renderBoard();
+            }
+
+            function updateStatus() {
+                let status = '';
+                let moveColor = game.turn() === 'w' ? 'WHITE' : 'BLACK';
+
+                if (game.in_checkmate()) {
+                    status = `GAME OVER, ${moveColor} IS IN CHECKMATE.`;
+                } else if (game.in_draw()) {
+                    status = 'GAME OVER, DRAWN POSITION.';
+                } else {
+                    status = `${moveColor} TO MOVE`;
+                    if (game.in_check()) {
+                        status += ', ' + moveColor + ' IS IN CHECK';
+                    }
+                }
+                statusText.innerText = status;
+                
+                // Change banner color based on turn
+                if(game.game_over()) {
+                    statusText.className = "bg-red-600 border-4 border-black text-white font-pixel p-3 mb-6 w-full text-center text-xs sm:text-sm retro-box uppercase";
+                } else if (game.turn() === 'w') {
+                    statusText.className = "bg-blue-600 border-4 border-black text-white font-pixel p-3 mb-6 w-full text-center text-xs sm:text-sm retro-box uppercase";
+                } else {
+                    statusText.className = "bg-purple-600 border-4 border-black text-white font-pixel p-3 mb-6 w-full text-center text-xs sm:text-sm retro-box uppercase";
+                }
+            }
+
+            // Reset functionality
+            resetBtn.addEventListener('click', () => {
+                game.reset();
+                selectedSquare = null;
+                renderBoard();
+            });
+
+            // Initial Render
+            renderBoard();
+        });
+    </script>
+</body>
+</html>
