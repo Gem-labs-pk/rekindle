@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+    <!-- Indigo Background matches Theme Color -->
+    <rect width="100" height="100" rx="20" fill="#4f46e5"/>
+    
+    <!-- Retro Arcade Cabinet Screen -->
+    <rect x="15" y="15" width="70" height="50" rx="5" fill="#1f2937" stroke="#fbbf24" stroke-width="4"/>
+    <rect x="25" y="25" width="50" height="30" fill="#000000"/>
+    
+    <!-- Pixels on screen -->
+    <rect x="30" y="35" width="10" height="10" fill="#4ade80"/>
+    <rect x="60" y="30" width="10" height="10" fill="#ef4444"/>
+    
+    <!-- Arcade Controls -->
+    <!-- D-Pad Base -->
+    <rect x="25" y="72" width="20" height="6" fill="#fbbf24"/>
+    <rect x="32" y="65" width="6" height="20" fill="#fbbf24"/>
+    <!-- Buttons -->
+    <circle cx="65" cy="75" r="5" fill="#ef4444"/>
+    <circle cx="80" cy="70" r="5" fill="#4ade80"/>
+</svg>

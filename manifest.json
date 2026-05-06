@@ -1,0 +1,17 @@
+{
+  "name": "Rekindle Classic Games Hub",
+  "short_name": "Rekindle",
+  "description": "Your Childhood. Restarted. A nostalgic hub for classic childhood games.",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#4f46e5",
+  "theme_color": "#4f46e5",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
