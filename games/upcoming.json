@@ -1,0 +1,26 @@
+[
+  {
+    "id": "pacman",
+    "title": "Pac-Man Clone",
+    "status": "Est. Q3 2026",
+    "color": "bg-yellow-400"
+  },
+  {
+    "id": "tetris",
+    "title": "Tetris",
+    "status": "Planning Phase",
+    "color": "bg-green-400"
+  },
+  {
+    "id": "space-invaders",
+    "title": "Space Invaders",
+    "status": "Concept",
+    "color": "bg-purple-400"
+  },
+  {
+    "id": "minesweeper",
+    "title": "Minesweeper",
+    "status": "Testing",
+    "color": "bg-red-400"
+  }
+]

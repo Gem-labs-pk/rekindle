@@ -220,6 +220,17 @@
                 renderBoard();
             });
 
+            // Mode toggle functionality
+            if (modeBtn) {
+                modeBtn.addEventListener('click', () => {
+                    vsComputer = !vsComputer;
+                    modeBtn.innerText = vsComputer ? "VS CPU" : "VS P2";
+                    game.reset(); // Restart game on mode change
+                    selectedSquare = null;
+                    renderBoard();
+                });
+            }
+
             // Initial Render
             renderBoard();
         });
