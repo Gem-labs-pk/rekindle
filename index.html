@@ -70,15 +70,10 @@
 <body class="min-h-screen text-gray-900 flex flex-col items-center py-8 px-4 sm:py-12 sm:px-6 lg:px-8">
 
     <!-- Top Navigation -->
-    <nav class="w-full max-w-6xl flex justify-between items-center mb-6 sm:mb-8 gap-2 overflow-x-auto pb-2">
-        <div class="flex gap-2">
-            <button id="info-btn" class="bg-blue-400 text-black border-4 border-black font-pixel text-[10px] sm:text-xs py-2 px-3 sm:px-4 retro-btn cursor-pointer whitespace-nowrap">
-                INFO
-            </button>
-            <a href="coming-soon.html" class="bg-pink-400 text-black border-4 border-black font-pixel text-[10px] sm:text-xs py-2 px-3 sm:px-4 retro-btn cursor-pointer whitespace-nowrap">
-                UPCOMING
-            </a>
-        </div>
+    <nav class="w-full max-w-6xl flex justify-between items-center mb-6 sm:mb-8 gap-2 pb-2">
+        <button id="info-btn" class="bg-blue-400 text-black border-4 border-black font-pixel text-[10px] sm:text-xs py-2 px-3 sm:px-4 retro-btn cursor-pointer whitespace-nowrap">
+            INFO
+        </button>
         <button id="settings-btn" class="bg-gray-300 text-black border-4 border-black font-pixel text-[10px] sm:text-xs py-2 px-3 sm:px-4 retro-btn cursor-pointer whitespace-nowrap">
             SETTINGS
         </button>
@@ -126,7 +121,7 @@
     </main>
 
     <footer class="mt-12 sm:mt-20 text-white font-pixel text-[10px] sm:text-xs text-center border-t-2 border-dashed border-indigo-400 pt-6 sm:pt-8 w-full max-w-4xl pb-4">
-        <p>&copy; 2026 Rekindle Games. Insert Coin to Continue.</p>
+        <p>&copy; 2026 Rekindle Games.</p>
     </footer>
 
     <!-- Info Modal -->
@@ -142,6 +137,21 @@
                     <p class="font-pixel text-sm mb-2">THE IDEA:</p>
                     <p class="text-base leading-tight">Your childhood, restarted. This hub was built to preserve classic mini-games in a single, nostalgic web application. A love letter to the 8-bit arcade era.</p>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settings-modal" class="hidden fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4">
+        <div class="bg-white border-4 border-black p-6 w-full max-w-md retro-box relative">
+            <button id="close-settings-btn" class="absolute -top-4 -right-4 bg-red-500 text-white border-4 border-black w-10 h-10 flex items-center justify-center font-pixel text-xl retro-btn cursor-pointer">X</button>
+            <h2 class="font-pixel text-2xl mb-6 text-gray-700 border-b-4 border-gray-700 pb-2">SETTINGS</h2>
+            
+            <div class="flex flex-col gap-4">
+                <p class="font-mono text-base text-gray-800 mb-2">Manage your local game data below.</p>
+                <button id="restore-scores-btn" class="bg-yellow-400 text-black border-4 border-black font-pixel text-[10px] sm:text-xs py-4 px-4 retro-btn cursor-pointer w-full text-center">
+                    RESTORE SCORES
+                </button>
             </div>
         </div>
     </div>
@@ -167,11 +177,29 @@
             const infoModal = document.getElementById('info-modal');
             const closeInfoBtn = document.getElementById('close-info-btn');
 
-            // Modal Event Listeners
+            const settingsBtn = document.getElementById('settings-btn');
+            const settingsModal = document.getElementById('settings-modal');
+            const closeSettingsBtn = document.getElementById('close-settings-btn');
+            const restoreScoresBtn = document.getElementById('restore-scores-btn');
+
+            // Info Modal Event Listeners
             infoBtn.addEventListener('click', () => infoModal.classList.remove('hidden'));
             closeInfoBtn.addEventListener('click', () => infoModal.classList.add('hidden'));
             infoModal.addEventListener('click', (e) => {
                 if (e.target === infoModal) infoModal.classList.add('hidden');
+            });
+
+            // Settings Modal Event Listeners
+            settingsBtn.addEventListener('click', () => settingsModal.classList.remove('hidden'));
+            closeSettingsBtn.addEventListener('click', () => settingsModal.classList.add('hidden'));
+            settingsModal.addEventListener('click', (e) => {
+                if (e.target === settingsModal) settingsModal.classList.add('hidden');
+            });
+
+            // Restore Scores Action
+            restoreScoresBtn.addEventListener('click', () => {
+                // Future logic to restore local storage scores goes here
+                alert("Scores restored successfully!");
             });
 
             // 1. Fetch the manifest
