@@ -14,104 +14,146 @@
     <style>
         body {
             font-family: 'VT323', monospace;
-            background-color: #4f46e5; /* Indigo 600 */
+            background-color: #4f46e5;
             background-image: 
                 linear-gradient(#4338ca 2px, transparent 2px),
                 linear-gradient(90deg, #4338ca 2px, transparent 2px),
                 linear-gradient(#4338ca 1px, transparent 1px),
                 linear-gradient(90deg, #4338ca 1px, transparent 1px);
-            background-size: 100px 100px, 100px 100px, 20px 20px, 20px 20px;
+            background-size: 50px 50px, 50px 50px, 10px 10px, 10px 10px;
             background-position: -2px -2px, -2px -2px, -1px -1px, -1px -1px;
         }
 
-        .font-pixel {
-            font-family: 'Press Start 2P', cursive;
+        @media (min-width: 640px) {
+            body {
+                background-size: 100px 100px, 100px 100px, 20px 20px, 20px 20px;
+            }
         }
 
-        /* Retro Box Shadow Effect */
+        .font-pixel { font-family: 'Press Start 2P', cursive; }
+        
         .retro-box {
-            box-shadow: 6px 6px 0px 0px rgba(0,0,0,1);
+            box-shadow: 4px 4px 0px 0px rgba(0,0,0,1);
             transition: all 0.1s ease;
+        }
+
+        @media (min-width: 640px) {
+            .retro-box { box-shadow: 6px 6px 0px 0px rgba(0,0,0,1); }
         }
 
         .retro-btn:hover {
             transform: translate(2px, 2px);
-            box-shadow: 4px 4px 0px 0px rgba(0,0,0,1);
+            box-shadow: 2px 2px 0px 0px rgba(0,0,0,1);
+        }
+
+        @media (min-width: 640px) {
+            .retro-btn:hover { box-shadow: 4px 4px 0px 0px rgba(0,0,0,1); }
         }
 
         .retro-btn:active {
-            transform: translate(6px, 6px);
+            transform: translate(4px, 4px);
             box-shadow: 0px 0px 0px 0px rgba(0,0,0,1);
+        }
+
+        @media (min-width: 640px) {
+            .retro-btn:active { transform: translate(6px, 6px); }
         }
     </style>
 </head>
-<body class="min-h-screen text-gray-900 flex flex-col items-center py-12 px-4 sm:px-6 lg:px-8">
+<body class="min-h-screen text-gray-900 flex flex-col items-center py-8 px-4 sm:py-12 sm:px-6 lg:px-8">
 
     <!-- Header Section -->
-    <header class="text-center mb-16">
-        <div class="inline-block bg-yellow-400 p-6 border-4 border-black retro-box transform -rotate-2">
-            <h1 class="font-pixel text-4xl md:text-6xl text-black tracking-widest uppercase">Rekindle</h1>
+    <header class="text-center mb-10 sm:mb-16 w-full max-w-md sm:max-w-none mx-auto">
+        <div class="inline-block bg-yellow-400 p-4 sm:p-6 border-4 border-black retro-box transform -rotate-2">
+            <h1 class="font-pixel text-2xl sm:text-4xl md:text-6xl text-black tracking-widest uppercase">Rekindle</h1>
         </div>
-        <p class="mt-6 text-2xl text-white font-bold bg-black inline-block px-4 py-2 border-2 border-white retro-box">
+        <p class="mt-4 sm:mt-6 text-lg sm:text-2xl text-white font-bold bg-black inline-block px-3 sm:px-4 py-2 border-2 border-white retro-box">
             Your Childhood. Restarted.
         </p>
     </header>
 
-    <!-- Games Grid -->
-    <main class="w-full max-w-6xl">
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+    <!-- Main Content Area -->
+    <main class="w-full max-w-6xl flex-grow flex flex-col items-center">
+        
+        <!-- UI States -->
+        <div id="ui-state" class="w-full max-w-2xl text-center">
+            <!-- Loading -->
+            <div id="state-loading" class="text-yellow-300 font-pixel text-sm sm:text-base py-10 animate-pulse">
+                LOADING MANIFEST.JSON...
+            </div>
             
-            <!-- Game Card: Tic-Tac-Toe -->
-            <article class="bg-white rounded-xl border-4 border-black p-6 retro-box flex flex-col">
-                <div class="bg-pink-200 h-48 border-4 border-black rounded flex items-center justify-center mb-6 relative overflow-hidden">
-                    <!-- Placeholder Icon -->
-                    <svg class="w-24 h-24 text-black" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 14h16M4 10h16M14 4v16M10 4v16"></path>
-                    </svg>
+            <!-- Error State (Hidden by default) -->
+            <div id="state-error" class="hidden bg-red-500 text-white p-6 border-4 border-black retro-box text-left">
+                <h2 class="font-pixel text-xl mb-4 text-black">ERROR: SYSTEM HALTED</h2>
+                <p class="text-lg sm:text-xl font-bold mb-2">Could not read <code class="bg-black px-2 py-1 text-red-400">games/manifest.json</code></p>
+                <p class="text-base sm:text-lg mb-4">If you opened this file directly (file://), your browser is blocking the request for security reasons.</p>
+                <div class="bg-black p-4 text-green-400 font-mono text-sm sm:text-base border-2 border-red-900">
+                    <p>> FIX INSTRUCTION:</p>
+                    <p>> Please serve this folder using a local web server.</p>
+                    <p>> Example (VS Code): Install 'Live Server' extension and click 'Go Live'.</p>
+                    <p>> Example (Python): Run 'python -m http.server' in your terminal.</p>
                 </div>
-                <h2 class="font-pixel text-xl mb-3">Tic-Tac-Toe</h2>
-                <p class="text-xl text-gray-700 flex-grow mb-6">The ultimate battle of X's and O's. Settle the score like it's 1999.</p>
-                <a href="games/template.html" class="block w-full text-center bg-green-400 text-black border-4 border-black font-pixel py-4 retro-btn cursor-pointer">
-                    PLAY NOW
-                </a>
-            </article>
-
-            <!-- Game Card: Snake -->
-            <article class="bg-white rounded-xl border-4 border-black p-6 retro-box flex flex-col">
-                <div class="bg-blue-200 h-48 border-4 border-black rounded flex items-center justify-center mb-6 relative overflow-hidden">
-                    <!-- Placeholder Icon -->
-                    <svg class="w-24 h-24 text-black" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v8l9-11h-7z"></path>
-                    </svg>
-                </div>
-                <h2 class="font-pixel text-xl mb-3">Snake</h2>
-                <p class="text-xl text-gray-700 flex-grow mb-6">Eat the apples, grow long, don't crash into yourself. A true classic.</p>
-                <a href="games/template.html" class="block w-full text-center bg-green-400 text-black border-4 border-black font-pixel py-4 retro-btn cursor-pointer">
-                    PLAY NOW
-                </a>
-            </article>
-
-            <!-- Game Card: Pong -->
-            <article class="bg-white rounded-xl border-4 border-black p-6 retro-box flex flex-col">
-                <div class="bg-purple-200 h-48 border-4 border-black rounded flex items-center justify-center mb-6 relative overflow-hidden">
-                    <!-- Placeholder Icon -->
-                    <svg class="w-24 h-24 text-black" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"></path>
-                    </svg>
-                </div>
-                <h2 class="font-pixel text-xl mb-3">Pong</h2>
-                <p class="text-xl text-gray-700 flex-grow mb-6">Two paddles, one ball, endless frustration and joy. Retro arcade style.</p>
-                <a href="games/template.html" class="block w-full text-center bg-green-400 text-black border-4 border-black font-pixel py-4 retro-btn cursor-pointer">
-                    PLAY NOW
-                </a>
-            </article>
-
+            </div>
         </div>
+
+        <!-- Games Grid (Hidden by default, populated dynamically) -->
+        <div id="games-container" class="hidden w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-10">
+            <!-- Game Cards injected here -->
+        </div>
+
     </main>
 
-    <footer class="mt-20 text-white font-pixel text-xs text-center border-t-2 border-dashed border-indigo-400 pt-8 w-full max-w-4xl">
+    <footer class="mt-12 sm:mt-20 text-white font-pixel text-[10px] sm:text-xs text-center border-t-2 border-dashed border-indigo-400 pt-6 sm:pt-8 w-full max-w-4xl pb-4">
         <p>&copy; 2026 Rekindle Games. Insert Coin to Continue.</p>
     </footer>
 
+    <!-- Core Logic -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const container = document.getElementById('games-container');
+            const stateLoading = document.getElementById('state-loading');
+            const stateError = document.getElementById('state-error');
+
+            // 1. Fetch the manifest
+            fetch('games/manifest.json')
+                .then(response => {
+                    if (!response.ok) throw new Error('Network response was not ok');
+                    return response.json();
+                })
+                .then(gamesData => {
+                    // 2. Hide loading state
+                    stateLoading.classList.add('hidden');
+                    
+                    // 3. Build UI
+                    renderGames(gamesData);
+                })
+                .catch(error => {
+                    console.error('Fetch error:', error);
+                    // 4. Show error UI
+                    stateLoading.classList.add('hidden');
+                    stateError.classList.remove('hidden');
+                });
+
+            // Interface Template Function
+            function renderGames(gamesData) {
+                container.classList.remove('hidden');
+
+                const gamesHTML = gamesData.map(game => `
+                    <article class="bg-white rounded-xl border-4 border-black p-4 sm:p-6 retro-box flex flex-col h-full">
+                        <div class="${game.bgColor} h-32 sm:h-48 border-4 border-black rounded flex items-center justify-center mb-4 sm:mb-6 relative overflow-hidden">
+                            ${game.icon}
+                        </div>
+                        <h2 class="font-pixel text-sm sm:text-xl mb-2 sm:mb-3">${game.title}</h2>
+                        <p class="text-base sm:text-xl text-gray-700 flex-grow mb-4 sm:mb-6 leading-relaxed">${game.description}</p>
+                        <a href="${game.path}" class="block w-full text-center bg-green-400 text-black border-4 border-black font-pixel py-3 sm:py-4 text-xs sm:text-sm retro-btn cursor-pointer mt-auto">
+                            PLAY NOW
+                        </a>
+                    </article>
+                `).join('');
+
+                container.innerHTML = gamesHTML;
+            }
+        });
+    </script>
 </body>
 </html>
